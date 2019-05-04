@@ -2,19 +2,23 @@ import librosa
 import os
 import numpy as np
 import soundfile as sf
-
+import numpy as np
 from tts import TTS, Voice
 
 class AudioProcessing:
-    
+
     def _decode_audio(audio):
         return sf.read(audio)
     
-    def __init__(self, audio):
-        self.audio = audio
-        
-    def modify(self, end_part, end_pitch, end_stretch, mid_part=0.1, mid_pitch=1, mid_stretch=1, name="modified.wav", accel = 1.5):
-        y, sr = AudioProcessing._decode_audio(self.audio)
+    def __init__(self):
+        self.final = np.empty(1)
+        self.sr = 0
+
+    def combine(self):
+        librosa.output.write_wav('final.wav', self.final, self.sr)
+
+    def modify(self, audio, end_part, end_pitch, end_stretch, mid_part=0.1, mid_pitch=1, mid_stretch=1, accel = 1.5):
+        y, sr = AudioProcessing._decode_audio(audio)
         modif_size_end = int(len(y)*end_part)
         modif_size_mid = int(len(y)*mid_part)
         end_range_start = len(y) - modif_size_end
@@ -42,6 +46,11 @@ class AudioProcessing:
         y_modified = np.concatenate([unmodified_one, y_mid_shift_stretch, unmodified_two, y_end_shift_stretch])
 
         y_final = librosa.effects.time_stretch(y_modified, accel)
-        
-        librosa.output.write_wav(name, y_final, sr)
-        
+
+        if self.final.any():
+            self.final = np.append(self.final, y_final)
+        else:
+            self.final = y_final
+        if not self.sr:
+            self.sr = sr
+
