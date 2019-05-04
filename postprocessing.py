@@ -1,9 +1,7 @@
 import librosa
-import os
-import numpy as np
 import soundfile as sf
 import numpy as np
-from tts import TTS, Voice
+
 
 class AudioProcessing:
 
@@ -31,13 +29,7 @@ class AudioProcessing:
         y_mid = y[mid_indices]
         unmodified_one = y[:mid_range_start]
         unmodified_two = y[mid_range_end:end_range_start]
-        
-        # print(len(y))
-        # print(len(y_ending))
-        # print(len(y_mid))
-        # print(len(unmodified_one))
-        # print(len(unmodified_two))
-        
+
         y_end_shifted = librosa.effects.pitch_shift(y_ending, sr, n_steps=end_pitch)
         y_end_shift_stretch = librosa.effects.time_stretch(y_end_shifted, end_stretch)
         y_mid_shifted = librosa.effects.pitch_shift(y_mid, sr, n_steps=mid_pitch)
