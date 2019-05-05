@@ -13,10 +13,10 @@ class RoboyClient:
 
         self.ssh.close()
 
-    def send_file(self, localpath, remotepath):
+    def send_file(self, localpath, remotepath, callback = None):
 
         sftp = self.ssh.open_sftp()
-        sftp.put(localpath, remotepath)
+        sftp.put(localpath, remotepath, callback = callback)
         sftp.close()
     
     def run_command(self, command):

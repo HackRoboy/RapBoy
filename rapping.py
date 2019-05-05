@@ -3,6 +3,8 @@ from postprocessing import AudioProcessing
 from lyric_crawler import crawl_lyrics
 from utils import prepare_text
 
+# word = input('Insert a word: ')
+
 word = input('Insert a word: ')
 
 ap = AudioProcessing()
