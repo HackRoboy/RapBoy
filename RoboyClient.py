@@ -13,26 +13,11 @@ class RoboyClient:
 
         self.ssh.close()
 
-    def send_file(self, localpath, remotepath):
+    def send_file(self, localpath, remotepath, callback = None):
 
         sftp = self.ssh.open_sftp()
-        # https://www.unixtutorial.org/atime-ctime-mtime-in-unix-filesystems
-        # mtime - used for tracking the actual changes to data of the file itself.
-        mtime = 0
-        try:
-            # returns http://docs.paramiko.org/en/2.4/api/sftp.html#paramiko.sftp_attr.SFTPAttributes
-            stat = sftp.stat(remotepath)
-            mtime = stat.st_mtime
-        except FileNotFoundError:
-            print('There is no such file on remote yet ' + remotepath)
-        # also returns http://docs.paramiko.org/en/2.4/api/sftp.html#paramiko.sftp_attr.SFTPAttributes
-        stat = sftp.put(localpath, remotepath)
-        new_mtime = stat.st_mtime
+        sftp.put(localpath, remotepath, callback = callback)
         sftp.close()
-        return new_mtime > mtime
-        # sftp = self.ssh.open_sftp()
-        # sftp.put(localpath, remotepath)
-        # sftp.close()
     
     def run_command(self, command):
 
