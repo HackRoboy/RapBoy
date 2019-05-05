@@ -1,7 +1,6 @@
 import librosa
 import soundfile as sf
 import numpy as np
-import pdb
 from math import floor
 
 class AudioProcessing:
@@ -13,8 +12,8 @@ class AudioProcessing:
         self.final_audio = np.empty(1)
         self.sr = 0
 
-    def write(self):
-        librosa.output.write_wav('final.wav', self.final_audio, self.sr)
+    def write(self, file, sr,name='rapboy/final.wav'):
+        librosa.output.write_wav(name, file, sr)
 
     def modify(self, audio, end_part, end_pitch, end_stretch, mid_part=0.1, mid_pitch=1, mid_stretch=1, accel = 1.5):
         y, sr = AudioProcessing._decode_audio(audio)
@@ -44,20 +43,21 @@ class AudioProcessing:
             self.final_audio = np.append(self.final_audio, y_final)
         else:
             self.final_audio = y_final
-        if not self.sr:
-            self.sr = sr
+        # if not self.sr:
+        #     self.sr = sr
 
     def insert_beat(self):
-        beat_audio, br = self.read_beat()
-        beat_audio_frame = beat_audio[:int(beat_audio.size/4)]
+        beat_audio, br = self.read_beat('beat.wav')
+        beat_audio_frame = beat_audio[:int(beat_audio.size/2)]
+        self.final_audio = self.final_audio.repeat(2, axis=0)
         times = floor(self.final_audio.size/beat_audio_frame.size)+2
         length_difference = times*beat_audio_frame.size - self.final_audio.size
         self.final_audio = np.append(self.final_audio, np.zeros(length_difference))
         final_beat = np.hstack([beat_audio_frame]*times)
-        # pdb.set_trace()
-        self.final_audio = self.final_audio + final_beat
-        # self.append_beat(beat_audio_frame, self.final_audio, start=True, amount=2)
-        # self.append_beat(beat_audio_frame, self.final_audio, start=False, amount=2)
+        self.final_audio = self.final_audio + final_beat*0.6
+        self.final_audio /= np.max(np.abs(self.final_audio))
+        self.final_audio = self.append_beat(beat_audio_frame, self.final_audio, start=True, amount=2)
+        return self.final_audio, br
 
     @staticmethod
     def append_beat(beat_audio, original_audio, start=True, amount=2):
