@@ -4,10 +4,14 @@ server = "192.168.0.105"
 username = "roboy"
 password = "Roboy2016"
 
-dance_command = """docker exec hungry_fermi bash -c 'source ~/melodic_ws/devel/setup.bash; 
-                export ROS_IP=192.168.0.105; 
-                rostopic pub /roboy/control/matrix/leds/mode/simple std_msgs/Int32 "data: 1";
-                rosservice call /roboy/cognition/face/emotion "emotion: \'img:https://i.imgur.com/wblSb5Y.png\'"; 
+#source ~/workspace/cognition_ws/devel/setup.bash;
+#rosservice call /roboy/cognition/face/emotion "emotion: \'img:https://i.imgur.com/wblSb5Y.png\'";
+
+
+dance_command = """
+                docker exec hungry_fermi bash -c 'source ~/melodic_ws/devel/setup.bash; 
+                export ROS_IP=192.168.0.105;
+                rostopic pub /roboy/control/matrix/leds/mode/simple std_msgs/Int32 "data: 1";  
                 '"""
 
 ACTIVATE_FLAG = True
@@ -24,7 +28,7 @@ def make_roboy_dance(bytes_sent, bytes_total):
     if bytes_sent == bytes_total and ACTIVATE_FLAG:
         cli = RoboyClient(server, username, password)
         (stdin, stdout, stderr) = cli.run_command(dance_command)
-        #(stdin, stdout, stderr) = cli.run_command("mpv " + remote_audio_path)
+        (stdin, stdout, stderr) = cli.run_command("mpv " + remote_audio_path)
         print_stream(stdout)
         print_stream(stderr)
         cli.close()
