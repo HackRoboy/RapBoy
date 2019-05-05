@@ -1,9 +1,13 @@
 import os
 import paramiko
 
+server = "192.168.0.105"
+username = "roboy"
+password = "Roboy2016"
+
 class RoboyClient:
 
-    def __init__(self, server, username, password):
+    def __init__(self):
 
         self.ssh = paramiko.SSHClient()
         self.ssh.load_host_keys(os.path.expanduser(os.path.join("~", ".ssh", "known_hosts")))
