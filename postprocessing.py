@@ -13,8 +13,8 @@ class AudioProcessing:
         self.final_audio = np.empty(1)
         self.sr = 0
 
-    def write(self, file, sr,name='rapboy/final.wav'):
-        librosa.output.write_wav(name, file, sr)
+    def write(self, file, sr,name='sample'):
+        librosa.output.write_wav('rapboy/'+name+'.wav', file, sr)
 
     def modify(self, audio, end_part, end_pitch, end_stretch, mid_part=0.1, mid_pitch=1, mid_stretch=1, accel = 1.2):
         y, sr = AudioProcessing._decode_audio(audio)
